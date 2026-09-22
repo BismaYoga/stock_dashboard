@@ -78,9 +78,31 @@ Sistem ini menggunakan arsitektur **terpisah (decoupled)**:
     - Kartu baru: **"🏢 Profil Perusahaan & Ringkasan Bisnis"** dengan highlight keunggulan kompetitif.
     - Menanamkan kamus data `EMITEN_PROFILES` di frontend sebagai fallback instan (zero-downtime) sehingga langsung tampil di dashboard tanpa menunggu perubahan backend.
 
+### Sesi 7: Resolusi Tuntas Error 'Unique Security Origin' & Validasi Rendering Frontend
+- **Analisis Mendalam Error**:
+  - `Unsafe attempt to load URL file:///... from frame with URL file:///... 'file:' URLs are treated as unique security origins.`
+  - Ditemukan 2 faktor penyebab:
+    1. **Sintaksis Terbuka**: Pada commit sebelumnya, penambahan kamus `EMITEN_PROFILES` secara tidak sengaja memotong penutup kurung kurawal `}` pada fungsi `loadEmiten()`. Ini memicu `SyntaxError: Unexpected end of input` yang menghentikan eksekusi script sebelum komponen DOM dirender.
+    2. **Akses Storage pada `file:///`**: Browser berbasis Chromium memperlakukan URL dengan protokol `file:///` sebagai origin unik (`origin: null`). Pada mode privasi tertentu, memanggil `localStorage.getItem` dapat melempar `SecurityError: Access to Storage is not allowed`.
+- **Langkah Perbaikan**:
+  - Menambahkan kurung penutup `}` yang hilang pada fungsi `loadEmiten()` di [`dashboard.html`](dashboard.html).
+  - Membungkus pembacaan dan penulisan `localStorage` dalam blok `try...catch` yang aman agar tidak pernah menghentikan alur program jika dibuka langsung sebagai file lokal.
+  - Membuat duplikat [`index.html`](index.html) sehingga dapat dijalankan langsung di server root HTTP (`localhost:8080`) maupun berbagai static web hosting.
+  - Memvalidasi seluruh sintaks JavaScript menggunakan Node.js VM engine (`new Function`).
+  - Menguji rendering menggunakan browser engine Chromium (Playwright):
+    - Berhasil mengambil daftar 69 emiten secara live dari Web App Apps Script.
+    - Berhasil merender Hero Section, 4 kartu metrik KPI, kartu Profil & Ringkasan Perusahaan, dan Chart historis tanpa error.
+
 ---
 
-## 📋 Catatan Teknis untuk Pengembangan Frontend (`dashboard.html`)
-- Endpoint API sudah terpasang secara default di variabel `DEFAULT_API_URL`.
-- Bila user mengganti URL deployment, dapat diubah melalui tombol `⚙️ API` di kanan atas header (tersimpan di `localStorage`).
-- Local server dapat diakses dengan menjalankan `jalankan_dashboard.bat`.
+## 📋 Catatan Teknis untuk Menjalankan Dashboard
+1. **Cara 1: Local HTTP Server (Sangat Disarankan)**
+   - Cukup double-click file [`jalankan_dashboard.bat`](jalankan_dashboard.bat).
+   - Browser akan otomatis membuka `http://localhost:8080/dashboard.html` (atau `http://localhost:8080/`).
+   - Bebas dari segala batasan keamanan `file:///` browser.
+2. **Cara 2: Buka Langsung File HTML**
+   - Double-click [`dashboard.html`](dashboard.html) atau [`index.html`](index.html).
+   - Kode sudah dilengkapi pelindung `try...catch` dan penghapusan `<base target="_top">` sehingga API request tetap dapat berjalan normal.
+3. **Konfigurasi URL API**:
+   - Jika URL deployment Apps Script diperbarui, klik tombol **⚙️ API** di pojok kanan atas dashboard untuk memasukkan URL baru.
+
