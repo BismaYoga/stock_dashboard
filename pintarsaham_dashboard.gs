@@ -23,6 +23,8 @@ const DASH_CFG = {
   DATA_SHEET: 'Data',
   // Currency conversion: data tersimpan dalam ribuan, dikalikan ini untuk IDR penuh
   SCALE_FACTOR: 1000,
+  // ID Google Spreadsheet Data Dashboard
+  SPREADSHEET_ID: '1tbkh-ulOyzm-SQm2H_cLEpZZDzQY7A0uB1v3fv-PAjE',
 };
 
 // 21 kuartal sama seperti di DataDashboard, urutan Q1 2026 -> Q1 2021
@@ -52,10 +54,30 @@ const DASH_COL = {
 // ============================ WEB APP ENTRY =================================
 
 function doGet() {
-  return HtmlService.createTemplateFromFile('Dashboard')
+  let template;
+  try {
+    template = HtmlService.createTemplateFromFile('dashboard');
+  } catch (e) {
+    template = HtmlService.createTemplateFromFile('Dashboard');
+  }
+  return template
     .evaluate()
     .setTitle('PintarSaham Dashboard')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+}
+
+/** Helper untuk mendapatkan instance Spreadsheet (by ID atau Active) */
+function getSpreadsheet_() {
+  if (DASH_CFG.SPREADSHEET_ID) {
+    try {
+      return SpreadsheetApp.openById(DASH_CFG.SPREADSHEET_ID);
+    } catch (e) {
+      Logger.log('Gagal openById(' + DASH_CFG.SPREADSHEET_ID + '): ' + e.message);
+    }
+  }
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (ss) return ss;
+  throw new Error('Spreadsheet tidak ditemukan. Pastikan DASH_CFG.SPREADSHEET_ID sudah benar atau script di-bind ke spreadsheet.');
 }
 
 /** Inject file lain (CSS/JS) ke template HTML utama. */
@@ -92,13 +114,15 @@ function openDashboardInfo() {
  * Return: { codes: [...], total: N, withData: M }
  */
 function listCodes() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getSpreadsheet_();
   const sheet = ss.getSheetByName(DASH_CFG.DATA_SHEET);
   if (!sheet || sheet.getLastRow() < 2) {
     return { codes: [], total: 0, withData: 0 };
   }
   const lastRow = sheet.getLastRow();
-  const values = sheet.getRange(2, 1, lastRow - 1, 157).getValues();
+  // Optimasi: Hanya baca kolom yang diperlukan untuk cek ketersediaan data (Kode s.d. akhir kuartal Laba Bersih)
+  const maxCol = DASH_COL.LABA_BERSIH_START - 1 + DASH_QUARTERS.length;
+  const values = sheet.getRange(2, 1, lastRow - 1, maxCol).getValues();
 
   const codes = [];
   let withData = 0;
@@ -136,7 +160,7 @@ function getEmitenData(code) {
   if (!code) return { error: 'Kode emiten kosong' };
   code = String(code).trim().toUpperCase();
 
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getSpreadsheet_();
   const sheet = ss.getSheetByName(DASH_CFG.DATA_SHEET);
   if (!sheet || sheet.getLastRow() < 2) {
     return { error: 'Sheet Data belum dibangun' };
@@ -174,13 +198,15 @@ function getEmitenData(code) {
   const meanPbv = parseFiniteNumber_(row[DASH_COL.MEAN_PBV - 1]);
   const maxPbv = parseFiniteNumber_(row[DASH_COL.MAX_PBV - 1]);
 
-  // Harga wajar = EPS × multiplier ATAU BVPS × multiplier (ribuan tidak relevan
-  // karena EPS/BVPS dan harga sahamnya satu satuan IDR)
+  // Harga wajar = EPS × multiplier ATAU BVPS × multiplier
+  // Catatan: P/E hanya valid jika EPS > 0. Bila EPS <= 0 (perusahaan merugi),
+  // valuasi PER di-set null (N/A) untuk mencegah target harga negatif.
+  const epsIsPositive = (eps != null && eps > 0);
   const fairValue = {
     per: {
-      bear: (eps != null && minPe != null) ? eps * minPe : null,
-      base: (eps != null && meanPe != null) ? eps * meanPe : null,
-      bull: (eps != null && maxPe != null) ? eps * maxPe : null,
+      bear: (epsIsPositive && minPe != null) ? eps * minPe : null,
+      base: (epsIsPositive && meanPe != null) ? eps * meanPe : null,
+      bull: (epsIsPositive && maxPe != null) ? eps * maxPe : null,
     },
     pbv: {
       bear: (bvps != null && minPbv != null) ? bvps * minPbv : null,

@@ -762,7 +762,10 @@
   }
 
   function valCard(metricLabel, metricValue, multiLabel, fv, harga) {
-    const mvDisplay = metricValue != null ? fmtIDR(metricValue, 2) : '&mdash;';
+    let mvDisplay = metricValue != null ? fmtIDR(metricValue, 2) : '&mdash;';
+    if (metricLabel === 'EPS' && metricValue != null && metricValue <= 0) {
+      mvDisplay += ' <span style="font-size:12px;color:var(--red);font-weight:700">(Rugi)</span>';
+    }
     return '<div class="val-card">' +
       '<div class="ratio-block">' +
         '<span class="value">' + mvDisplay + '</span>' +

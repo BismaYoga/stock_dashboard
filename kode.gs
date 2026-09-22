@@ -64,6 +64,9 @@ const CONFIG = {
   // -> bagian XXXX adalah ID-nya. Kosongkan untuk auto-detect by name.
   ANALISA_SAHAM_FOLDER_ID: '',
 
+  // ID Google Spreadsheet "Data Dashboard"
+  SPREADSHEET_ID: '1tbkh-ulOyzm-SQm2H_cLEpZZDzQY7A0uB1v3fv-PAjE',
+
   DATA_SHEET_NAME: 'Data',
   PLAN_SHEET_NAME: '_PintarSaham_Plan', // hidden helper sheet
   LOG_SHEET_NAME:  '_PintarSaham_Log',  // hidden log issue sheet
@@ -160,6 +163,8 @@ function onOpen() {
     .createMenu('🟦 PintarSaham')
     .addItem('▶ Build Data Dashboard (auto-resume)', 'buildDataDashboard')
     .addItem('⏸ Stop Auto-Resume', 'stopAutoResume')
+    .addSeparator()
+    .addItem('🌐 Info / Buka Web App Dashboard', 'openDashboardInfo')
     .addSeparator()
     .addItem('🔍 Preview Files', 'previewFiles')
     .addItem('📊 Lihat Progress', 'showProgress')
@@ -1282,9 +1287,16 @@ function countRemaining_(planSheet) {
 // ============================ DRIVE NAVIGATION ==============================
 
 function locateDashboard_() {
+  if (CONFIG.SPREADSHEET_ID) {
+    try {
+      return SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+    } catch (e) {
+      Logger.log('Gagal openById(' + CONFIG.SPREADSHEET_ID + '): ' + e.message);
+    }
+  }
   const active = SpreadsheetApp.getActiveSpreadsheet();
   if (active) return active;
-  throw new Error('Script harus dijalankan sebagai container-bound di "Data Dashboard".');
+  throw new Error('Spreadsheet tidak ditemukan. Pastikan script container-bound di "Data Dashboard" atau isi CONFIG.SPREADSHEET_ID.');
 }
 
 function ensureDataSheet_(ss) {
@@ -1552,7 +1564,7 @@ function collectValuationFiles_(folder, type) {
 function extractCode_(filename, type) {
   let base = filename.replace(/\.(xlsx|xls|gsheet)$/i, '').trim();
   if (/petunjuk|template|contoh/i.test(base)) return null;
-  const re = new RegExp('^([A-Z0-9]{3,5})[\\s_\\-\\.]+' + type + '\\b', 'i');
+  const re = new RegExp('^([A-Z0-9]{3,5})[\\s_\\-\\.\\(\\[]+' + type + '\\b', 'i');
   const m = base.match(re);
   return m ? m[1].toUpperCase() : null;
 }
