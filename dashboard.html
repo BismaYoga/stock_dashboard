@@ -511,8 +511,9 @@
       <span class="brand-text">PintarSaham <span class="accent">Dashboard</span></span>
     </div>
     <div class="tagline">Menyaring Noise &middot; Memberi Insight</div>
-    <div class="header-stats" id="headerStats">
-      <span class="loader"></span> Memuat data...
+    <div class="header-stats" style="display:flex;align-items:center;justify-content:flex-end;gap:8px;">
+      <span id="headerStats"><span class="loader"></span> Memuat data...</span>
+      <button onclick="promptApiUrl()" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;transition:background 0.2s;" title="Atur / Ubah URL Web App API">⚙️ API</button>
     </div>
   </div>
 </header>
@@ -541,22 +542,72 @@
 </main>
 
 <script>
-  // ========== CONFIG ==========
+  // ========== CONFIG API & STATE ==========
   const DEFAULT_CODE = 'BBCA';
   const LOGO_URL_TEMPLATE = 'https://assets.stockbit.com/logos/companies/{CODE}.png';
 
-  // ========== STATE ==========
+  // URL deployment Web App Google Apps Script (JSON API)
+  // Bisa diubah kapan saja via tombol ⚙️ API di pojok kanan atas
+  let API_URL = localStorage.getItem('PINTARSAHAM_API_URL') || '';
+
   let allCodes = [];
   let activeIndex = -1;
   let currentChart1 = null, currentChart2 = null, currentChart3 = null;
 
+  function promptApiUrl() {
+    const current = API_URL || '';
+    const input = prompt(
+      'Masukkan URL Web App Google Apps Script (JSON API):\n\n' +
+      'Contoh: https://script.google.com/macros/s/AKfycbx.../exec',
+      current
+    );
+    if (input !== null) {
+      const trimmed = input.trim();
+      if (trimmed) {
+        API_URL = trimmed;
+        localStorage.setItem('PINTARSAHAM_API_URL', trimmed);
+        fetchCodes();
+      }
+    }
+  }
+
+  async function callApi(action, params = {}) {
+    // Fallback: jika dijalankan di dalam Google Apps Script (HtmlService)
+    if (typeof google !== 'undefined' && google.script && google.script.run) {
+      return new Promise(function (resolve, reject) {
+        if (action === 'list') {
+          google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).listCodes();
+        } else if (action === 'get') {
+          google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).getEmitenData(params.code);
+        }
+      });
+    }
+
+    if (!API_URL) {
+      throw new Error('URL Web App API belum diatur. Klik tombol ⚙️ API untuk memasukkan URL.');
+    }
+
+    const url = new URL(API_URL);
+    url.searchParams.set('action', action);
+    for (const k in params) {
+      if (params[k] !== undefined && params[k] !== null) {
+        url.searchParams.set(k, params[k]);
+      }
+    }
+
+    const res = await fetch(url.toString(), { redirect: 'follow' });
+    if (!res.ok) {
+      throw new Error('Gagal menghubungi API (HTTP ' + res.status + ')');
+    }
+    const data = await res.json();
+    if (data && data.error) {
+      throw new Error(data.error);
+    }
+    return data;
+  }
+
   // ========== INIT ==========
   window.addEventListener('DOMContentLoaded', function () {
-    google.script.run
-      .withSuccessHandler(handleCodes)
-      .withFailureHandler(handleError)
-      .listCodes();
-
     const picker = document.getElementById('picker');
     picker.addEventListener('input', onPickerInput);
     picker.addEventListener('focus', onPickerInput);
@@ -564,7 +615,28 @@
     document.addEventListener('click', function (e) {
       if (!e.target.closest('.picker-wrap')) closeDropdown();
     });
+
+    if (!API_URL && (typeof google === 'undefined' || !google.script || !google.script.run)) {
+      document.getElementById('headerStats').innerHTML =
+        '<span style="color:#ff8a3f">&#9888; API belum di-set</span>';
+      document.getElementById('content').innerHTML =
+        '<div class="placeholder">' +
+        '<div class="heading">URL Web App API Belum Diatur</div>' +
+        '<div style="margin-bottom:20px;color:var(--ink-2)">Silakan masukkan URL Web App Google Apps Script (JSON API) Anda untuk mulai memuat data.</div>' +
+        '<button class="btn-primary" onclick="promptApiUrl()">⚙️ Masukkan URL Web App API</button>' +
+        '</div>';
+      return;
+    }
+
+    fetchCodes();
   });
+
+  function fetchCodes() {
+    document.getElementById('headerStats').innerHTML = '<span class="loader"></span> Memuat data...';
+    callApi('list')
+      .then(handleCodes)
+      .catch(handleError);
+  }
 
   function handleError(err) {
     document.getElementById('headerStats').innerHTML =
@@ -664,14 +736,13 @@
   function loadEmiten(code) {
     document.getElementById('content').innerHTML =
       '<div class="placeholder"><span class="loader"></span> &nbsp; Memuat ' + code + '...</div>';
-    google.script.run
-      .withSuccessHandler(renderEmiten)
-      .withFailureHandler(function (err) {
+    callApi('get', { code: code })
+      .then(renderEmiten)
+      .catch(function (err) {
         document.getElementById('content').innerHTML =
           '<div class="placeholder" style="color:#dc2626">&#9888; ' +
           (err && err.message ? err.message : 'gagal memuat') + '</div>';
-      })
-      .getEmitenData(code);
+      });
   }
 
   // ========== RENDER ==========

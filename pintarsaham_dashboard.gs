@@ -51,19 +51,36 @@ const DASH_COL = {
   BVPS: 154, MIN_PBV: 155, MEAN_PBV: 156, MAX_PBV: 157,
 };
 
-// ============================ WEB APP ENTRY =================================
+// ============================ WEB APP ENTRY (JSON API) =======================
 
-function doGet() {
-  let template;
+/**
+ * Web App Endpoint: Mengembalikan data murni dalam format JSON.
+ * Tidak memerlukan HTML di Apps Script.
+ *
+ * Query parameters:
+ *   ?action=list              -> List semua kode emiten { codes, total, withData }
+ *   ?action=get&code=BBCA     -> Detail data emiten (harga, valuasi, chart, YoY, dll)
+ */
+function doGet(e) {
   try {
-    template = HtmlService.createTemplateFromFile('dashboard');
-  } catch (e) {
-    template = HtmlService.createTemplateFromFile('Dashboard');
+    const action = (e && e.parameter && e.parameter.action) || 'list';
+    let data;
+
+    if (action === 'get') {
+      const code = e && e.parameter && e.parameter.code;
+      data = getEmitenData(code);
+    } else if (action === 'list') {
+      data = listCodes();
+    } else {
+      data = { error: 'Action tidak dikenal. Gunakan ?action=list atau ?action=get&code=KODE' };
+    }
+
+    return ContentService.createTextOutput(JSON.stringify(data))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ error: err.message || String(err) }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
-  return template
-    .evaluate()
-    .setTitle('PintarSaham Dashboard')
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
 /** Helper untuk mendapatkan instance Spreadsheet (by ID atau Active) */
@@ -78,11 +95,6 @@ function getSpreadsheet_() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   if (ss) return ss;
   throw new Error('Spreadsheet tidak ditemukan. Pastikan DASH_CFG.SPREADSHEET_ID sudah benar atau script di-bind ke spreadsheet.');
-}
-
-/** Inject file lain (CSS/JS) ke template HTML utama. */
-function include(filename) {
-  return HtmlService.createHtmlOutputFromFile(filename).getContent();
 }
 
 // ============================ MENU INTEGRATION ==============================
