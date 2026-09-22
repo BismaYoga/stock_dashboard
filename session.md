@@ -64,6 +64,20 @@ Sistem ini menggunakan arsitektur **terpisah (decoupled)**:
 - **Status Backend**: `kode.gs` dan `pintarsaham_dashboard.gs` sudah selesai dideploy dan dalam kondisi stabil.
 - **Fokus Selanjutnya**: Seluruh perubahan dan peningkatan berikutnya difokuskan pada antarmuka frontend di [`dashboard.html`](dashboard.html).
 
+### Sesi 6: Penambahan Data Informasi Ringkasan Emiten (69 Saham)
+- **Kebutuhan**: User ingin menambahkan informasi ringkasan profil bisnis untuk setiap emiten agar tampil di dashboard.
+- **Solusi Spreadsheet**:
+  - Dibuat file script [`populate_ringkasan.gs`](populate_ringkasan.gs) yang memuat fungsi `populateRingkasanData()` untuk menginisialisasi sheet **`Ringkasan`** di spreadsheet tanpa menimpa data sheet `Data`.
+  - Berisi data lengkap untuk **ke-69 emiten** (AADI s.d. WIFI): `Kode`, `Nama Perusahaan`, `Sektor`, `Subsektor`, `Ringkasan Bisnis`, dan `Highlight / Keunggulan`.
+  - Menambahkan menu `📝 Isi / Update Sheet Ringkasan (69 Emiten)` di toolbar `kode.gs`.
+- **Integrasi Backend**:
+  - Menambahkan `getEmitenProfile_` di [`pintarsaham_dashboard.gs`](pintarsaham_dashboard.gs) untuk menyertakan objek `profile` pada respons JSON.
+- **Integrasi Frontend**:
+  - Menambahkan styling CSS dan komponen UI di [`dashboard.html`](dashboard.html):
+    - Nama lengkap perusahaan dan badge sektor pada Hero Section.
+    - Kartu baru: **"🏢 Profil Perusahaan & Ringkasan Bisnis"** dengan highlight keunggulan kompetitif.
+    - Menanamkan kamus data `EMITEN_PROFILES` di frontend sebagai fallback instan (zero-downtime) sehingga langsung tampil di dashboard tanpa menunggu perubahan backend.
+
 ---
 
 ## 📋 Catatan Teknis untuk Pengembangan Frontend (`dashboard.html`)

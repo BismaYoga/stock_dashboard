@@ -243,8 +243,12 @@ function getEmitenData(code) {
   const totalLiab = latestValueOf_(metrics.totalLiab);
   const totalEkui = latestValueOf_(metrics.totalEkui);
 
+  // Profil & Ringkasan Bisnis (dari sheet "Ringkasan" bila ada)
+  const profile = getEmitenProfile_(ss, code);
+
   return {
     code: code,
+    profile: profile,
     harga: harga,
     hasFinancialData: hasFinancialData,
     latestQuarter: latestQuarter,
@@ -260,6 +264,25 @@ function getEmitenData(code) {
     yoy: yoy,
     balanceSeries: balanceSeries  // {quarters, aset, liabilitas, ekuitas, ekuitasGrowth}
   };
+}
+
+function getEmitenProfile_(ss, code) {
+  const sheet = ss.getSheetByName('Ringkasan');
+  if (!sheet || sheet.getLastRow() < 2) return null;
+  const lastRow = sheet.getLastRow();
+  const values = sheet.getRange(2, 1, lastRow - 1, 6).getValues();
+  for (let i = 0; i < values.length; i++) {
+    if (String(values[i][0] || '').trim().toUpperCase() === code) {
+      return {
+        nama: String(values[i][1] || ''),
+        sektor: String(values[i][2] || ''),
+        subsektor: String(values[i][3] || ''),
+        ringkasan: String(values[i][4] || ''),
+        highlight: String(values[i][5] || ''),
+      };
+    }
+  }
+  return null;
 }
 
 // ============================ HELPERS =======================================

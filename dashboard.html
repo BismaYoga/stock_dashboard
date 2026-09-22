@@ -252,6 +252,83 @@
       margin-right: 6px;
       vertical-align: 6px;
     }
+    .hero-company-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink-2);
+      margin-top: 4px;
+      letter-spacing: -0.01em;
+    }
+    .badge-sector {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: var(--blue-light);
+      color: var(--blue-accent);
+      margin-right: 6px;
+    }
+    .profile-card {
+      margin-top: 24px;
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 22px 24px;
+    }
+    .profile-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line-2);
+    }
+    .profile-title h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -0.01em;
+    }
+    .profile-desc {
+      font-size: 13.5px;
+      color: var(--ink-2);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .profile-highlight-wrap {
+      background: var(--blue-light-2);
+      border-left: 3px solid var(--blue-accent);
+      padding: 12px 16px;
+      border-radius: 0 6px 6px 0;
+    }
+    .profile-highlight-wrap .label-tiny {
+      margin-bottom: 6px;
+      display: block;
+      color: var(--navy-soft);
+    }
+    .profile-bullets {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    .profile-bullets li {
+      position: relative;
+      padding-left: 18px;
+      font-size: 12.5px;
+      color: var(--ink);
+      line-height: 1.5;
+      margin-bottom: 4px;
+    }
+    .profile-bullets li::before {
+      content: "•";
+      position: absolute;
+      left: 4px;
+      color: var(--blue-accent);
+      font-weight: bold;
+    }
 
     /* ========== EMPTY / NO DATA STATE ========== */
     .placeholder {
@@ -745,7 +822,492 @@
           '<div class="placeholder" style="color:#dc2626">&#9888; ' +
           (err && err.message ? err.message : 'gagal memuat') + '</div>';
       });
-  }
+  // ========== EMITEN PROFILES DATABASE (69 EMITEN) ==========
+  const EMITEN_PROFILES = {
+    AADI: {
+      nama: 'PT Adaro Andalan Indonesia Tbk',
+      sektor: 'Energi',
+      subsektor: 'Pertambangan Batubara Termal',
+      ringkasan: 'Perusahaan pertambangan batubara termal hasil spin-off dari Adaro Energy yang mengelola tambang batubara berkualitas tinggi di Kalimantan Selatan dan Tengah.',
+      highlight: '• Salah satu produsen batubara termal berbiaya rendah di Indonesia.\n• Cadangan batubara masif dengan infrastruktur rantai pasok sungai terintegrasi.\n• Kebijakan pembagian dividen yang menarik bagi pemegang saham.'
+    },
+    ACES: {
+      nama: 'PT Aspirasi Hidup Indonesia Tbk',
+      sektor: 'Konsumer Siklikal',
+      subsektor: 'Ritel Perbaikan Rumah & Gaya Hidup',
+      ringkasan: 'Ritel perlengkapan rumah tangga dan gaya hidup terkemuka di Indonesia (sebelumnya pemegang lisensi Ace Hardware) dengan ratusan gerai di berbagai kota besar.',
+      highlight: '• Jaringan toko luas dan loyalitas pelanggan yang solid (member base kuat).\n• Portofolio produk private label eksklusif ber-margin tinggi.\n• Pertumbuhan gerai konsisten di kota tier-1 dan tier-2.'
+    },
+    ADMR: {
+      nama: 'PT Adaro Minerals Indonesia Tbk',
+      sektor: 'Energi',
+      subsektor: 'Pertambangan Batubara Metalurgi',
+      ringkasan: 'Produsen batubara metalurgi kokas keras (coking coal) pertama dan terbesar di Indonesia, serta berekspansi ke proyek smelter aluminium hijau di Kalimantan Utara.',
+      highlight: '• Memonopoli pasokan coking coal premium domestik untuk industri peleburan baja.\n• Marjin laba operasional tinggi didukung biaya penambangan yang kompetitif.\n• Prospek jangka panjang strategis dari proyek hilirisasi smelter aluminium.'
+    },
+    ADRO: {
+      nama: 'PT Alamtri Resources Indonesia Tbk',
+      sektor: 'Energi',
+      subsektor: 'Investasi & Hilirisasi Energi Hijau',
+      ringkasan: 'Grup energi terdiversifikasi yang bertransformasi dari tambang energi fosil menuju pembangkit EBT, pengolahan mineral, dan industri hijau berkelanjutan.',
+      highlight: '• Neraca keuangan sangat sehat dengan kas melimpah (net cash position).\n• Diversifikasi agresif ke smelter aluminium hijau dan energi terbarukan.\n• Rekam jejak tata kelola perusahaan (GCG) dan pembagian dividen konsisten.'
+    },
+    AKRA: {
+      nama: 'PT AKR Corporindo Tbk',
+      sektor: 'Energi',
+      subsektor: 'Distribusi BBM, Logistik & Kawasan Industri',
+      ringkasan: 'Penyedia rantai pasok logistik dan distributor BBM/kimia dasar terintegrasi, serta pengembang kawasan industri terpadu JIIPE Gresik dengan pelabuhan laut dalam.',
+      highlight: '• Skema marjin fee distribusi BBM dan kimia yang stabil dan minim risiko harga komoditas.\n• Monetisasi penjualan lahan kawasan industri JIIPE (Java Integrated Industrial and Ports Estate).\n• Kemitraan strategis ritel SPBU bersama BP dan ekosistem smelter Freeport di JIIPE.'
+    },
+    AMMN: {
+      nama: 'PT Amman Mineral Internasional Tbk',
+      sektor: 'Bahan Baku',
+      subsektor: 'Pertambangan Tembaga & Emas',
+      ringkasan: 'Perusahaan tambang tembaga dan emas terbesar kedua di Indonesia yang mengoperasikan tambang Batu Hijau dan mengembangkan proyek prospektif Elang di Sumbawa, NTB.',
+      highlight: '• Cadangan tembaga dan emas masif dengan umur tambang produktif jangka panjang.\n• Penyelesaian fasilitas smelter tembaga domestik meningkatkan nilai tambah produk.\n• Tingginya permintaan tembaga global didorong tren elektrifikasi dan transisi energi.'
+    },
+    AMRT: {
+      nama: 'PT Sumber Alfaria Trijaya Tbk',
+      sektor: 'Konsumer Non-Siklikal',
+      subsektor: 'Ritel Minimarket (Alfamart)',
+      ringkasan: 'Pengelola jaringan ritel minimarket Alfamart dan Alfamidi terbesar di Indonesia dengan lebih dari 20.000 gerai yang tersebar hingga ke pelosok pemukiman.',
+      highlight: '• Dominasi jaringan distribusi ritel modern terdekat dari pemukiman konsumen (proximity store).\n• Pertumbuhan fee-based income dari layanan transaksi digital dan logistik pickup point.\n• Perputaran persediaan (inventory turnover) sangat efisien dan ekspansi luar Jawa.'
+    },
+    ANTM: {
+      nama: 'PT Aneka Tambang Tbk',
+      sektor: 'Bahan Baku',
+      subsektor: 'Pertambangan Emas, Nikel & Bauksit',
+      ringkasan: 'BUMN tambang terintegrasi vertikal yang memproduksi emas batangan Logam Mulia, feronikel, bijih nikel, dan bauksit, serta memegang peran kunci ekosistem baterai EV.',
+      highlight: '• Merek emas batangan Logam Mulia memiliki likuiditas dan kepercayaan tertinggi di Indonesia.\n• Posisi strategis dalam rantai pasok ekosistem baterai kendaraan listrik (EV).\n• Penjualan emas ritel menjadi instrumen lindung nilai (safe haven) saat ketidakpastian makro.'
+    },
+    ASII: {
+      nama: 'PT Astra International Tbk',
+      sektor: 'Perindustrian',
+      subsektor: 'Konglomerasi Otomotif, Alat Berat & Keuangan',
+      ringkasan: 'Konglomerasi terbesar di Indonesia dengan portofolio bisnis terdiversifikasi di sektor otomotif (pemimpin pasar mobil/motor), alat berat & pertambangan (UNTR), dan jasa keuangan.',
+      highlight: '• Penguasa pangsa pasar mobil (>50%) dan sepeda motor (>70%) di Indonesia.\n• Ekosistem bisnis terintegrasi yang saling menopang (pembiayaan, asuransi, perbengkelan).\n• Arus kas operasional yang masif dan kebijakan dividen yang sangat royal.'
+    },
+    AVIA: {
+      nama: 'PT Avia Avian Tbk',
+      sektor: 'Bahan Baku',
+      subsektor: 'Manufaktur Cat & Bahan Bangunan',
+      ringkasan: 'Pemimpin pasar cat dekoratif dan arsitektural di Indonesia dengan merek legendaris Avian dan No Drop yang didukung jaringan distribusi mandiri ke puluhan ribu toko.',
+      highlight: '• Pangsa pasar cat dekoratif nomor 1 di Indonesia (>20%).\n• Sistem distribusi langsung mandiri (in-house logistics) ke puluhan ribu toko bahan bangunan.\n• Marjin laba kotor dan marjin operasional tinggi berkat efisiensi formulasi bahan baku.'
+    },
+    BBCA: {
+      nama: 'PT Bank Central Asia Tbk',
+      sektor: 'Keuangan',
+      subsektor: 'Bank Konvensional',
+      ringkasan: 'Bank swasta terbesar di Indonesia yang terkenal dengan keunggulan transaksi digital, basis nasabah setia, serta likuiditas dana murah (CASA) yang sangat mendominasi.',
+      highlight: '• Rasio dana murah (CASA) konsisten di atas 80%, memberikan biaya dana (Cost of Funds) terendah di industri.\n• Kualitas aset superior dengan NPL sangat rendah dan pencadangan tebal.\n• Return on Equity (ROE) konsisten di atas 20% didukung ekosistem perbankan digital masif.'
+    },
+    BBNI: {
+      nama: 'PT Bank Negara Indonesia (Persero) Tbk',
+      sektor: 'Keuangan',
+      subsektor: 'Bank Konvensional',
+      ringkasan: 'Salah satu bank BUMN terbesar di Indonesia dengan mandat fokus pada pembiayaan korporasi berskala besar, sindikasi, dan bisnis transaksional internasional/global banking.',
+      highlight: '• Transformasi digital dan pembersihan kualitas aset yang sukses menekan credit cost.\n• Penguasaan pembiayaan segmen korporasi tier-1 dan nasabah diaspora global.\n• Pertumbuhan laba solid didukung perbaikan marjin bunga bersih (NIM) dan efisiensi operasional.'
+    },
+    BBRI: {
+      nama: 'PT Bank Rakyat Indonesia (Persero) Tbk',
+      sektor: 'Keuangan',
+      subsektor: 'Bank Konvensional & Finansial Mikro',
+      ringkasan: 'Bank dengan laba terbesar di Indonesia dan penguasa pasar kredit mikro serta ultra-mikro (Holding Ultra Mikro bersama Pegadaian dan PNM).',
+      highlight: '• Jaringan branchless banking (AgenBRILink) mencapai ratusan ribu agen di pelosok desa.\n• Marjin bunga bersih (NIM) tebal berkat dominasi segmen kredit mikro berimbal hasil tinggi.\n• Dividen payout ratio historis tinggi (>80%) ditopang rasio kecukupan modal (CAR) yang kokoh.'
+    },
+    BBTN: {
+      nama: 'PT Bank Tabungan Negara (Persero) Tbk',
+      sektor: 'Keuangan',
+      subsektor: 'Bank Pembiayaan Perumahan (KPR)',
+      ringkasan: 'Bank BUMN dengan spesialisasi utama pada pembiayaan perumahan rakyat (KPR subsidi dan non-subsidi), menguasai pangsa pasar terbesar KPR di Indonesia.',
+      highlight: '• Penguasa pasar KPR nasional dengan mandat strategis program perumahan rakyat pemerintah.\n• Permintaan kredit KPR yang defensif seiring tingginya angka backlog perumahan di Indonesia.\n• Upaya terukur menurunkan biaya dana melalui perbaikan rasio CASA dan platform digital perumahan.'
+    },
+    BMRI: {
+      nama: 'PT Bank Mandiri (Persero) Tbk',
+      sektor: 'Keuangan',
+      subsektor: 'Bank Konvensional',
+      ringkasan: 'Bank dengan total aset terbesar di Indonesia yang unggul dalam pembiayaan korporasi, ekosistem wholesale, serta aplikasi digital retail Livin\' dan wholesale Kopra.',
+      highlight: '• Penguasa segmen kredit korporasi dan komersial dengan ekosistem supply chain terintegrasi.\n• Aplikasi Livin\' by Mandiri menjadi salah satu super-app finansial paling aktif di Indonesia.\n• Pertumbuhan CASA dan fee-based income masif dengan rasio NPL terendah dalam sejarah bank.'
+    },
+    BRPT: {
+      nama: 'PT Barito Pacific Tbk',
+      sektor: 'Bahan Baku',
+      subsektor: 'Petrokimia & Energi Terbarukan',
+      ringkasan: 'Holding konglomerasi industri milik Prajogo Pangestu yang menaungi raksasa petrokimia Chandra Asri Pacific (TPIA) dan produsen panas bumi Star Energy Geothermal (BREN).',
+      highlight: '• Portofolio aset strategis di sektor petrokimia terintegrasi terbesar di Indonesia.\n• Produsen energi geotermal dengan kontrak jangka panjang berdenominasi USD.\n• Sinergi ekspansi infrastruktur energi, pelabuhan, dan logistik industri.'
+    },
+    BSDE: {
+      nama: 'PT Bumi Serpong Damai Tbk',
+      sektor: 'Properti & Real Estat',
+      subsektor: 'Pengembangan Kota Mandiri',
+      ringkasan: 'Pengembang properti terkemuka di bawah grup Sinar Mas Land yang mengelola kawasan kota mandiri BSD City serta berbagai proyek komersial dan residensial strategis.',
+      highlight: '• Cadangan lahan (landbank) sangat luas di area penyangga Jakarta dengan nilai perolehan historis murah.\n• Marketing sales kuat ditopang segmen residensial menengah-atas dan insentif PPN DTP.\n• Posisi kas sehat dan rasio utang (gearing) yang relatif konservatif dibanding rata-rata industri.'
+    },
+    BTPS: {
+      nama: 'PT Bank BTPN Syariah Tbk',
+      sektor: 'Keuangan',
+      subsektor: 'Bank Syariah Finansial Mikro',
+      ringkasan: 'Bank syariah yang fokus melayani segmen prasejahtera produktif perempuan di pedesaan melalui pembiayaan kelompok tanpa agunan (pola sentra).',
+      highlight: '• Marjin imbal hasil pembiayaan tinggi sejalan dengan karakteristik segmen ultra-mikro.\n• Model pendampingan lapangan berbasis komunitas yang menciptakan kedekatan nasabah.\n• Rasio permodalan (CAR) sangat tebal dan komitmen dividen yang menarik.'
+    },
+    BUKA: {
+      nama: 'PT Bukalapak.com Tbk',
+      sektor: 'Teknologi',
+      subsektor: 'E-Commerce & Layanan O2O (Mitra)',
+      ringkasan: 'Perusahaan teknologi yang berfokus pada digitalisasi warung tradisional melalui platform Mitra Bukalapak, gaming marketplace, dan manajemen investasi.',
+      highlight: '• Posisi kas dan setara kas sangat melimpah tanpa beban utang berbunga.\n• Pendapatan bunga dan hasil investasi instrumen likuid menopang profitabilitas bottom-line.\n• Efisiensi operasional dengan fokus pada lini bisnis ber-marjin positif (Mitra & Gaming).'
+    },
+    CMRY: {
+      nama: 'PT Cisarua Mountain Dairy Tbk',
+      sektor: 'Konsumer Non-Siklikal',
+      subsektor: 'Olahan Susu & Daging Premium',
+      ringkasan: 'Produsen produk susu fermentasi (yogurt), susu cair UHT bernutrisi, dan olahan daging beku (Kanzler) premium dengan pertumbuhan penetrasi pasar yang sangat pesat.',
+      highlight: '• Pemimpin pasar nomor 1 di kategori minuman yogurt (Cimory) dan sosis siap saji premium (Kanzler).\n• Saluran distribusi unik melalui jaringan Miss Cimory melengkapi jaringan ritel modern.\n• Inovasi produk berkelanjutan dengan kekuatan branding premium ber-marjin tebal.'
+    },
+    CPIN: {
+      nama: 'PT Charoen Pokphand Indonesia Tbk',
+      sektor: 'Konsumer Non-Siklikal',
+      subsektor: 'Pakan Ternak & Perunggasan Terintegrasi',
+      ringkasan: 'Produsen pakan ternak, Day-Old-Chicks (DOC), dan olahan ayam (Fiesta) terintegrasi terbesar di Indonesia di bawah naungan Charoen Pokphand Group.',
+      highlight: '• Penguasa pangsa pasar pakan ternak nasional dengan efisiensi pabrik skala besar.\n• Integrasi vertikal dari hulu (pakan, pembibitan) hingga hilir (makanan olahan Fiesta & Champ).\n• Jaringan gerai ritel Prima Freshmart yang memperkuat penetrasi langsung ke konsumen.'
+    },
+    CTRA: {
+      nama: 'PT Ciputra Development Tbk',
+      sektor: 'Properti & Real Estat',
+      subsektor: 'Pengembangan Residensial & Kota Mandiri',
+      ringkasan: 'Pengembang properti paling terdiversifikasi secara geografis di Indonesia dengan puluhan proyek kota mandiri dan perumahan di lebih dari 30 kota.',
+      highlight: '• Merek Ciputra memiliki reputasi brand equity tertinggi dalam segmen residensial keluarga.\n• Diversifikasi geografis luas mengurangi risiko konsentrasi di satu wilayah saja.\n• Peningkatan recurring income dari portofolio rumah sakit (Ciputra Hospital), mal, dan hotel.'
+    },
+    CUAN: {
+      nama: 'PT Petrindo Jaya Kreasi Tbk',
+      sektor: 'Energi',
+      subsektor: 'Holding Tambang Mineral & Batubara',
+      ringkasan: 'Holding pertambangan milik Prajogo Pangestu yang membawahi tambang batubara termal, batubara metalurgi, serta diversifikasi ke mineral nikel dan emas.',
+      highlight: '• Pertumbuhan agresif melalui akuisisi strategis aset-aset tambang berproduksi.\n• Sinergi rantai pasok energi di bawah ekosistem grup Barito.\n• Efisiensi logistik pengangkutan tambang yang terhubung langsung dengan infrastruktur pelabuhan.'
+    },
+    DSNG: {
+      nama: 'PT Dharma Satya Nusantara Tbk',
+      sektor: 'Konsumer Non-Siklikal',
+      subsektor: 'Perkebunan Kelapa Sawit & Kayu Olahan',
+      ringkasan: 'Produsen minyak kelapa sawit mentah (CPO) bereputasi tinggi dengan produktivitas kebun terdepan, serta manufaktur produk kayu olahan berkelanjutan.',
+      highlight: '• Profil usia kebun prima dengan produktivitas TBS dan oil extraction rate (OER) di atas rata-rata.\n• Penerapan prinsip ESG ketat dengan pemanfaatan limbah pabrik kelapa sawit menjadi biomassa.\n• Biaya produksi tunai (cash cost) terkendali memberikan marjin solid saat harga CPO tinggi.'
+    },
+    DSSA: {
+      nama: 'PT Dian Swastatika Sentosa Tbk',
+      sektor: 'Energi',
+      subsektor: 'Pertambangan Batubara, Pembangkit & Teknologi',
+      ringkasan: 'Holding investasi energi dan infrastruktur grup Sinar Mas yang mengendalikan produsen batubara Golden Energy Mines (GEMS) serta bisnis telekomunikasi dan teknologi.',
+      highlight: '• Kontribusi laba masif dari ekspor batubara kalori menengah-tinggi melalui anak usaha.\n• Diversifikasi portofolio ke bisnis penyediaan internet fiber optic, data center, dan energi bersih.\n• Likuiditas neraca dan kapasitas dividen yang sangat tebal.'
+    },
+    ELSA: {
+      nama: 'PT Elnusa Tbk',
+      sektor: 'Energi',
+      subsektor: 'Jasa Penunjang Hulu Migas & Distribusi BBM',
+      ringkasan: 'Anak usaha Pertamina Hulu Energi yang bergerak di bidang jasa hulu minyak dan gas (seismik, drilling, well services), logistik distribusi BBM, dan jasa energi maritim.',
+      highlight: '• Kontrak jangka panjang captive dari Pertamina Group menjamin visibilitas pendapatan.\n• Kinerja divisi distribusi dan logistik energi yang stabil dan konsisten bertumbuh.\n• Peningkatan aktivitas eksplorasi dan lifting migas domestik menopang permintaan jasa hulu.'
+    },
+    EMTK: {
+      nama: 'PT Elang Mahkota Teknologi Tbk',
+      sektor: 'Teknologi',
+      subsektor: 'Media, Telekomunikasi & Investasi Digital',
+      ringkasan: 'Konglomerasi teknologi dan media yang mengendalikan stasiun TV nasional (SCTV, Indosiar melalui SCMA), platform streaming Vidio, serta investasi di ekosistem perbankan digital.',
+      highlight: '• Vidio menjadi platform OTT streaming lokal nomor 1 di Indonesia dengan hak siar konten olahraga bergengsi.\n• Penguasa pangsa pasar penonton (audience share) TV free-to-air melalui SCTV dan Indosiar.\n• Neraca keuangan sehat dengan likuiditas kas tinggi untuk ekspansi investasi digital.'
+    },
+    ENRG: {
+      nama: 'PT Energi Mega Persada Tbk',
+      sektor: 'Energi',
+      subsektor: 'Eksplorasi & Produksi Minyak dan Gas Bumi',
+      ringkasan: 'Perusahaan migas hulu terafiliasi grup Bakrie yang mengoperasikan berbagai blok konsesi minyak dan gas bumi di Sumatra, Jawa Timur, dan luar negeri.',
+      highlight: '• Porsi cadangan dan produksi gas bumi yang dominan dengan kontrak penjualan jangka panjang fixed price.\n• Akuisisi blok-blok migas produktif baru yang meningkatkan kapasitas lifting harian.\n• Penurunan rasio utang secara signifikan meningkatkan fleksibilitas keuangan perusahaan.'
+    },
+    ERAA: {
+      nama: 'PT Erajaya Swasembada Tbk',
+      sektor: 'Konsumer Siklikal',
+      subsektor: 'Distributor & Ritel Gadget / Elektronik',
+      ringkasan: 'Distributor dan peritel perangkat telekomunikasi (iPhone, Samsung, Xiaomi), gadget IoT, farmasi, dan gaya hidup terbesar di Indonesia dengan ribuan gerai Erafone dan iBox.',
+      highlight: '• Mitra distribusi resmi utama produk Apple (iBox) dan merek smartphone global terdepan.\n• Diversifikasi sukses ke segmen ritel gaya hidup (JD Sports), kecantikan, dan makanan.\n• Keberhasilan aturan IMEI pemerintah yang melindungi pasar ritel resmi dari barang black market.'
+    },
+    ESSA: {
+      nama: 'PT ESSA Industries Indonesia Tbk',
+      sektor: 'Bahan Baku',
+      subsektor: 'Pengolahan Amonia & Kilang LPG',
+      ringkasan: 'Produsen amonia biru/bersih dan pengolah gas alam cair (LPG) swasta terkemuka di Indonesia yang mengoperasikan fasilitas pabrik amonia modern di Luwuk, Sulawesi Tengah.',
+      highlight: '• Salah satu produsen amonia dengan efisiensi energi tertinggi di dunia.\n• Pelopor proyek Blue Ammonia di Asia Tenggara untuk memasok kebutuhan energi bersih masa depan.\n• Keuntungan dari struktur kontrak pasokan gas alam domestik berbiaya kompetitif.'
+    },
+    HEAL: {
+      nama: 'PT Medikaloka Hermina Tbk',
+      sektor: 'Kesehatan',
+      subsektor: 'Layanan Rumah Sakit (Hermina)',
+      ringkasan: 'Jaringan rumah sakit swasta terbesar di Indonesia yang berfokus pada layanan ibu dan anak serta bertransformasi menjadi rumah sakit umum tipe B dan C melayani BPJS dan swasta.',
+      highlight: '• Operator rumah sakit dengan efisiensi operasional terbaik dalam melayani pasien BPJS Kesehatan.\n• Rencana ekspansi rumah sakit baru yang terukur di kota tier-2 dan proyek IKN Nusantara.\n• Kemitraan strategis dengan investor global (Astra) yang memperkuat struktur permodalan.'
+    },
+    HMSP: {
+      nama: 'PT H.M. Sampoerna Tbk',
+      sektor: 'Konsumer Non-Siklikal',
+      subsektor: 'Manufaktur Rokok & Tembakau',
+      ringkasan: 'Produsen rokok terbesar di Indonesia (afiliasi Philip Morris International) dengan merek legendaris Dji Sam Soe, Sampoerna A, serta pelopor produk tembakau bebas asap IQOS.',
+      highlight: '• Penguasa pangsa pasar rokok nasional dengan kekuatan merek dan jaringan distribusi terluas.\n• Pertumbuhan segmen Sigaret Kretek Tangan (SKT) yang menikmati tarif cukai lebih rendah.\n• Neraca keuangan sangat sehat tanpa utang bank dan dividen payout ratio mendekati 100%.'
+    },
+    HRTA: {
+      nama: 'PT Hartadinata Abadi Tbk',
+      sektor: 'Konsumer Siklikal',
+      subsektor: 'Manufaktur & Ritel Perhiasan Emas',
+      ringkasan: 'Produsen dan peritel perhiasan emas serta emas batangan terintegrasi di Indonesia dengan jaringan pabrik, toko ritel, dan kemitraan ekspor emas perhiasan ke pasar global.',
+      highlight: '• Integrasi rantai bisnis dari pabrik pengolahan emas hingga gerai ritel mandiri.\n• Lonjakan pendapatan ekspor perhiasan emas ke negara-negara Timur Tengah dan Asia Selatan.\n• Permintaan emas domestik yang defensif sebagai instrumen tabungan masyarakat.'
+    },
+    HRUM: {
+      nama: 'PT Harum Energy Tbk',
+      sektor: 'Energi',
+      subsektor: 'Tambang Batubara & Hilirisasi Nikel',
+      ringkasan: 'Perusahaan pertambangan batubara milik keluarga Barki yang bertransformasi agresif menjadi pemain terintegrasi di ekosistem pengolahan nikel dan bahan baku baterai.',
+      highlight: '• Biaya penambangan batubara kalori tinggi yang sangat efisien dan berorientasi ekspor.\n• Sukses mengakuisisi smelter nikel RKEF dan proyek High Pressure Acid Leach (HPAL).\n• Struktur neraca keuangan yang sehat dengan rasio utang terkendali.'
+    },
+    ICBP: {
+      nama: 'PT Indofood CBP Sukses Makmur Tbk',
+      sektor: 'Konsumer Non-Siklikal',
+      subsektor: 'Produsen Makanan Olahan (Indomie)',
+      ringkasan: 'Produsen mie instan terbesar di dunia dengan merek ikonik Indomie, serta mengoperasikan divisi susu (Indomilk), makanan ringan, bumbu, biskuit, dan nutrisi khusus.',
+      highlight: '• Merek Indomie memiliki loyalitas konsumen (pricing power) yang tak tertandingi di pasar global.\n• Kehadiran internasional masif di Timur Tengah dan Afrika melalui Pinehill Company Limited.\n• Marjin laba kotor yang tebal dan defensif terhadap fluktuasi ekonomi makro.'
+    },
+    INCO: {
+      nama: 'PT Vale Indonesia Tbk',
+      sektor: 'Bahan Baku',
+      subsektor: 'Pertambangan & Pengolahan Nikel Matte',
+      ringkasan: 'Produsen nikel dalam matte berbiaya rendah terbesar di Indonesia yang mengoperasikan tambang dan fasilitas pengolahan pirometalurgi berbasis energi terbarukan (PLTA).',
+      highlight: '• Salah satu produsen nikel dengan jejak karbon terendah di dunia berkat 3 PLTA mandiri.\n• Kemitraan strategis dengan BUMN Mind ID serta produsen otomotif global.\n• Proyek ekspansi HPAL di Pomalaa dan Morowali yang menjamin pertumbuhan jangka panjang.'
+    },
+    INDF: {
+      nama: 'PT Indofood Sukses Makmur Tbk',
+      sektor: 'Konsumer Non-Siklikal',
+      subsektor: 'Holding Pangan & Agribisnis Terintegrasi',
+      ringkasan: 'Induk usaha konglomerasi pangan grup Salim yang mengendalikan ICBP, Bogasari (produsen tepung terigu terbesar), perkebunan kelapa sawit, dan jaringan distribusi ritel.',
+      highlight: '• Integrasi hulu-hilir yang memberikan ketahanan pasokan bahan baku pangan nasional.\n• Valuasi saham atraktif dengan diskon holding terhadap nilai pasar anak usahanya (ICBP).\n• Cash flow operasional yang stabil dan dividen reguler yang menopang imbal hasil investor.'
+    },
+    INKP: {
+      nama: 'PT Indah Kiat Pulp & Paper Tbk',
+      sektor: 'Bahan Baku',
+      subsektor: 'Manufaktur Bubur Kertas & Kertas Industri',
+      ringkasan: 'Salah satu produsen pulp, kertas budaya, dan kemasan industri terbesar di dunia di bawah naungan grup Asia Pulp & Paper (APP) Sinar Mas dengan pasar ekspor global.',
+      highlight: '• Skala ekonomi raksasa dengan integrasi pasokan serat kayu bersertifikasi lestari.\n• Permintaan kemasan karton industri didorong oleh pertumbuhan logistik dan e-commerce global.\n• Efisiensi biaya produksi pulp per ton yang menempatkan perusahaan di kuartil terendah kurva biaya global.'
+    },
+    INTP: {
+      nama: 'PT Indocement Tunggal Prakarsa Tbk',
+      sektor: 'Bahan Baku',
+      subsektor: 'Manufaktur Semen (Tiga Roda)',
+      ringkasan: 'Produsen semen terbesar kedua di Indonesia dengan merek terpercaya Semen Tiga Roda, mengoperasikan kompleks pabrik modern di Citeureup, Cirebon, dan Tarjun.',
+      highlight: '• Penguasaan pangsa pasar semen yang sangat dominan di wilayah Jabodetabek dan Jawa Barat.\n• Akuisisi Semen Grobogan memperkuat penetrasi logistik di Jawa Tengah dan Jawa Timur.\n• Neraca keuangan sangat kokoh tanpa utang berbunga (zero debt) dan kas melimpah.'
+    },
+    ISAT: {
+      nama: 'PT Indosat Tbk',
+      sektor: 'Komunikasi',
+      subsektor: 'Operator Telekomunikasi Seluler',
+      ringkasan: 'Operator seluler terbesar kedua di Indonesia (Indosat Ooredoo Hutchison) hasil merger sukses yang melayani puluhan juta pelanggan dengan merek IM3 dan Tri.',
+      highlight: '• Realisasi sinergi merger yang melampaui target, menghasilkan efisiensi capex dan opex.\n• Peningkatan Average Revenue Per User (ARPU) didorong oleh monetisasi data dan paket digital.\n• Ekspansi jaringan ke luar Jawa dan adopsi teknologi AI untuk pengoptimalan infrastruktur jaringan.'
+    },
+    ITMG: {
+      nama: 'PT Indo Tambangraya Megah Tbk',
+      sektor: 'Energi',
+      subsektor: 'Pertambangan Batubara & Perdagangan Energi',
+      ringkasan: 'Produsen batubara kalori menengah-tinggi yang terkenal dengan efisiensi operasional tinggi dan kebijakan pembagian dividen bernilai besar (high dividend yield).',
+      highlight: '• Rata-rata harga jual batubara (ASP) premium berkat kualitas batubara kalori tinggi.\n• Komitmen dividen payout ratio yang sangat royal kepada pemegang saham publik.\n• Diversifikasi ke proyek energi surya fotovoltaik dan perdagangan bahan bakar industri.'
+    },
+    JPFA: {
+      nama: 'PT Japfa Comfeed Indonesia Tbk',
+      sektor: 'Konsumer Non-Siklikal',
+      subsektor: 'Agri-Food & Peternakan Terintegrasi',
+      ringkasan: 'Perusahaan agri-food terintegrasi vertikal terbesar kedua di Indonesia yang bergerak di bidang pakan ternak, pembibitan ayam, budidaya perikanan, dan produk daging olahan.',
+      highlight: '• Efisiensi pabrik pakan ternak modern dengan sebaran fasilitas di seluruh kepulauan Indonesia.\n• Penguatan hilirisasi produk protein hewani bernilai tambah tinggi (So Good dan Best Meat).\n• Perbaikan tata kelola pasokan DOC nasional oleh regulator yang menjaga stabilitas marjin industri.'
+    },
+    JSMR: {
+      nama: 'PT Jasa Marga (Persero) Tbk',
+      sektor: 'Infrastruktur',
+      subsektor: 'Operator Jalan Tol',
+      ringkasan: 'BUMN pengelola dan operator jalan tol terbesar di Indonesia yang menguasai lebih dari 50% panjang jalan tol beroperasi di seluruh Indonesia, termasuk Jalan Tol Trans Jawa.',
+      highlight: '• Arus kas operasional (toll revenue) yang sangat stabil dan terus meningkat seiring volume mobilitas.\n• Monetisasi aset melalui kemitraan strategis ekuitas di anak usaha jalan tol.\n• Kenaikan tarif tol berkala setiap dua tahun yang terjamin regulasi sebagai lindung nilai inflasi.'
+    },
+    KIJA: {
+      nama: 'PT Kawasan Industri Jababeka Tbk',
+      sektor: 'Properti & Real Estat',
+      subsektor: 'Pengembangan Kawasan Industri Terpadu',
+      ringkasan: 'Pengembang kawasan industri kota mandiri terintegrasi di Cikarang (Kota Jababeka) dan Kendal (KIK bersama Sembcorp), lengkap dengan pelabuhan kering dan pembangkit listrik.',
+      highlight: '• Ekosistem industri terpadu dengan tenant multinasional terkemuka dari Jepang dan Eropa.\n• Pertumbuhan pesat penjualan lahan di Kawasan Industri Kendal berstatus KEK.\n• Recurring revenue kuat dari penyediaan air bersih, pengolahan limbah, dan listrik industri.'
+    },
+    KLBF: {
+      nama: 'PT Kalbe Farma Tbk',
+      sektor: 'Kesehatan',
+      subsektor: 'Farmasi, Nutrisi & Layanan Kesehatan',
+      ringkasan: 'Perusahaan farmasi dan produk kesehatan terbesar di Asia Tenggara yang memproduksi obat resep, obat bebas (Promag, Mixagrip), produk nutrisi, dan jaringan distribusi Enseval.',
+      highlight: '• Portofolio produk farmasi dan kesehatan konsumen paling komprehensif di Indonesia.\n• Rantai pasok distribusi farmasi (Enseval) terluas yang menjangkau seluruh apotek dan klinik.\n• Investasi strategis dalam pengembangan obat biologis (biopharmaceuticals) dan vaksin inovatif.'
+    },
+    KPIG: {
+      nama: 'PT MNC Land Tbk',
+      sektor: 'Properti & Real Estat',
+      subsektor: 'Pengembangan Properti & Hospitality',
+      ringkasan: 'Perusahaan properti grup MNC yang mengembangkan kawasan ekonomi khusus (KEK) pariwisata terintegrasi MNC Lido City, hotel bintang lima, dan gedung perkantoran.',
+      highlight: '• Status Kawasan Ekonomi Khusus (KEK) Lido dengan fasilitas insentif perpajakan dan kepabeanan.\n• Fasilitas pariwisata terpadu termasuk lapangan golf kelas dunia dan theme park.\n• Portofolio aset hospitality komersial di lokasi strategis Jakarta, Surabaya, dan Bali.'
+    },
+    MAPA: {
+      nama: 'PT MAP Aktif Adiperkasa Tbk',
+      sektor: 'Konsumer Siklikal',
+      subsektor: 'Ritel Olahraga, Sepatu & Anak (Planet Sports)',
+      ringkasan: 'Anak usaha MAPI yang memegang lisensi dan mengoperasikan gerai ritel produk olahraga dan gaya hidup terkemuka (Planet Sports, Sports Station, Foot Locker, Kidz Station).',
+      highlight: '• Hak distribusi eksklusif merek olahraga global nomor 1 dunia (Nike, Adidas, Puma, Skechers, New Balance).\n• Tren gaya hidup sehat dan olahraga perkotaan (running, gym, padel) mendorong pertumbuhan ritel.\n• Ekspansi sukses ke pasar regional Asia Tenggara (Filipina, Vietnam, Thailand, Malaysia).'
+    },
+    MAPI: {
+      nama: 'PT Mitra Adiperkasa Tbk',
+      sektor: 'Konsumer Siklikal',
+      subsektor: 'Ritel Gaya Hidup, Departemen Store & F&B',
+      ringkasan: 'Ritel gaya hidup nomor 1 di Indonesia dengan portofolio lebih dari 150 merek global di segmen busana (Zara, Mango), F&B (Starbucks, Subway), dan department store (Sogo, Seibu).',
+      highlight: '• Portofolio merek paling bergengsi menyasar konsumen segmen menengah-atas dengan daya beli tangguh.\n• Jaringan gerai ritel luas di mal-mal premium di seluruh kota utama Indonesia.\n• Strategi omnichannel digital sukses melalui platform e-commerce dan program loyalitas MAPCLUB.'
+    },
+    MEDC: {
+      nama: 'PT Medco Energi Internasional Tbk',
+      sektor: 'Energi',
+      subsektor: 'Eksplorasi Migas, Tembaga & Pembangkit Listrik',
+      ringkasan: 'Perusahaan energi independen terkemuka di Asia Tenggara yang bergerak di bidang eksplorasi migas hulu, pertambangan tembaga (kepemilikan signifikan di AMMN), dan pembangkit listrik.',
+      highlight: '• Rekam jejak akuisisi aset migas berproduksi tinggi yang sukses (Blok Corridor dan Natuna).\n• Kontribusi laba dan dividen signifikan dari kepemilikan saham di Amman Mineral (AMMN).\n• Biaya lifting migas kompetitif serta bauran penjualan gas jangka panjang yang stabil.'
+    },
+    MIKA: {
+      nama: 'PT Mitra Keluarga Karyasehat Tbk',
+      sektor: 'Kesehatan',
+      subsektor: 'Layanan Rumah Sakit Swasta',
+      ringkasan: 'Jaringan rumah sakit swasta premium terkemuka di Indonesia yang melayani pasien segmen menengah dan menengah-atas dengan fokus pada keunggulan klinis dan kepuasan pasien.',
+      highlight: '• Marjin profitabilitas (EBITDA margin) tertinggi di antara operator rumah sakit publik di Indonesia.\n• Manajemen biaya operasional yang disiplin dan efisiensi permodalan yang prima.\n• Neraca keuangan sangat sehat tanpa beban utang bank dan posisi kas operasional tebal.'
+    },
+    MTEL: {
+      nama: 'PT Dayamitra Telekomunikasi Tbk',
+      sektor: 'Infrastruktur',
+      subsektor: 'Penyedia Menara Telekomunikasi (Mitratel)',
+      ringkasan: 'Anak usaha Telkom Indonesia yang merupakan pemilik dan operator menara telekomunikasi terbesar di Asia Tenggara dengan lebih dari 38.000 menara di seluruh Indonesia.',
+      highlight: '• Kepemilikan menara terbesar dengan keunggulan footprint menara di luar pulau Jawa.\n• Rasio penyewaan (tenancy ratio) terus bertumbuh didorong ekspansi jaringan 4G/5G operator seluler.\n• Ekspansi agresif ke bisnis fiber-to-the-tower (FTTT) sebagai tulang punggung data modern.'
+    },
+    MYOR: {
+      nama: 'PT Mayora Indah Tbk',
+      sektor: 'Konsumer Non-Siklikal',
+      subsektor: 'Makanan & Minuman Olahan (Kopiko, Torabika)',
+      ringkasan: 'Produsen makanan dan minuman olahan terkemuka dengan merek global seperti biskuit Roma, permen Kopiko, kopi Torabika, sereal Energen, dan air mineral Le Minerale.',
+      highlight: '• Kekuatan inovasi produk makanan/minuman dengan penetrasi pasar global ke lebih dari 100 negara.\n• Porsi penjualan ekspor tinggi (>40%) memberikan lindung nilai alami terhadap valuta asing.\n• Volume penjualan sangat defensif terhadap siklus ekonomi berkat harga produk terjangkau.'
+    },
+    PGAS: {
+      nama: 'PT Perusahaan Gas Negara Tbk',
+      sektor: 'Energi',
+      subsektor: 'Transmisi & Distribusi Gas Bumi',
+      ringkasan: 'Subholding gas Pertamina yang menguasai lebih dari 90% infrastruktur pipa transmisi dan distribusi gas bumi nasional untuk memasok sektor industri dan pembangkit listrik.',
+      highlight: '• Monopoli alami pada jaringan pipa gas bumi nasional sepanjang ribuan kilometer.\n• Peran krusial dalam program transisi energi nasional sebagai penyedia energi gas ramah lingkungan.\n• Arus kas operasional stabil dari bisnis transmisi dan niaga gas berorientasi industri.'
+    },
+    PGEO: {
+      nama: 'PT Pertamina Geothermal Energy Tbk',
+      sektor: 'Energi',
+      subsektor: 'Pembangkit Listrik Panas Bumi (Geotermal)',
+      ringkasan: 'Subholding energi baru terbarukan Pertamina yang mengelola wilayah kerja panas bumi terbesar di Indonesia dengan kapasitas terpasang ribuan megawatt.',
+      highlight: '• Pemain murni energi hijau terbarukan dengan kontrak penjualan listrik jangka panjang berdenominasi USD ke PLN.\n• Potensi cadangan panas bumi terbesar di dunia yang terletak di sepanjang ring-of-fire Indonesia.\n• Marjin EBITDA sangat tebal (>75%) dan dukungan penuh pemerintah dalam agenda dekarbonisasi.'
+    },
+    PNLF: {
+      nama: 'PT Panin Financial Tbk',
+      sektor: 'Keuangan',
+      subsektor: 'Jasa Asuransi Jiwa & Investasi Keuangan',
+      ringkasan: 'Perusahaan holding jasa keuangan grup Panin yang bergerak di bidang asuransi jiwa dan merupakan pemegang saham pengendali di PT Bank Pan Indonesia Tbk (PNBN).',
+      highlight: '• Kepemilikan saham signifikan di Bank Panin (PNBN) menyumbang kontribusi nilai buku dan dividen solid.\n• Tingkat solvabilitas (RBC) asuransi sangat kuat jauh melampaui ketentuan regulasi minimum.\n• Valuasi harga saham kerap diperdagangkan pada diskon yang dalam terhadap nilai aktiva bersih (NAV).'
+    },
+    POWR: {
+      nama: 'PT Cikarang Listrindo Tbk',
+      sektor: 'Utilitas',
+      subsektor: 'Penyedia Listrik Kawasan Industri (IPP)',
+      ringkasan: 'Penyedia tenaga listrik swasta terlama di Indonesia yang melayani ribuan pelanggan industri di lima kawasan industri besar Cikarang serta memasok listrik ke PLN.',
+      highlight: '• Kontrak penyediaan listrik eksklusif dengan pelanggan kawasan industri tanpa risiko gagal bayar berarti.\n• Rekam jejak keandalan operasional pabrik yang prima dengan ketersediaan listrik 99%.\n• Kebijakan dividen tunai berimbal hasil tinggi (high dividend yield) secara berkala.'
+    },
+    PTBA: {
+      nama: 'PT Bukit Asam Tbk',
+      sektor: 'Energi',
+      subsektor: 'Pertambangan Batubara BUMN',
+      ringkasan: 'Anggota holding tambang BUMN MIND ID yang memproduksi batubara termal dengan cadangan terbesar di Indonesia di Tanjung Enim, Sumatra Selatan.',
+      highlight: '• Cadangan batubara melimpah dengan jalur pengangkutan kereta api terdedikasi bersama PT KAI.\n• Biaya penambangan tunai rendah dan porsi pasokan jangka panjang untuk ketahanan listrik PLN (DMO).\n• Rekam jejak pembagian dividen bernilai jumbo dengan payout ratio historis hingga 100%.'
+    },
+    PWON: {
+      nama: 'PT Pakuwon Jati Tbk',
+      sektor: 'Properti & Real Estat',
+      subsektor: 'Pengembangan Properti Superblok & Mal',
+      ringkasan: 'Raja mal dan superblok di Indonesia yang mengelola portofolio pusat perbelanjaan tersukses di Jakarta dan Surabaya (Gandaria City, Kota Kasablanka, Tunjungan Plaza).',
+      highlight: '• Porsi pendapatan berulang (recurring income) tertinggi di industri properti Indonesia (>70%).\n• Tingkat okupansi mal konsisten di atas 90% dengan antrean tenant ritel terkemuka.\n• Neraca keuangan sangat sehat dengan posisi kas kuat dan rasio utang konservatif.'
+    },
+    RAJA: {
+      nama: 'PT Rukun Raharja Tbk',
+      sektor: 'Energi',
+      subsektor: 'Infrastruktur & Perdagangan Gas Bumi',
+      ringkasan: 'Penyedia infrastruktur energi terintegrasi yang bergerak di bidang transmisi pipa gas bumi, perdagangan gas, pengolahan gas, serta participating interest di Blok Rokan.',
+      highlight: '• Kepemilikan participating interest di blok minyak terbesar Indonesia (Blok Rokan) menyumbang arus kas stabil.\n• Jaringan pipa transmisi gas bumi yang melayani pembangkit listrik dan kawasan industri utama.\n• Diversifikasi ke fasilitas pengolahan air bersih dan kompresi gas untuk industri.'
+    },
+    SCMA: {
+      nama: 'PT Surya Citra Media Tbk',
+      sektor: 'Komunikasi',
+      subsektor: 'Media Penyiaran & Platform Streaming',
+      ringkasan: 'Anak usaha EMTK yang menaungi stasiun televisi terpopuler SCTV dan Indosiar, rumah produksi SinemArt, serta platform streaming nomor satu di Indonesia, Vidio.',
+      highlight: '• Penguasa pangsa pemirsa (audience share) dan kue iklan televisi nasional melalui SCTV dan Indosiar.\n• Vidio memimpin pasar streaming OTT domestik dengan subscriber berbayar tertinggi berkat konten olahraga eksklusif.\n• Integrasi produksi konten in-house yang kuat menghasilkan efisiensi biaya pemrograman media.'
+    },
+    SIDO: {
+      nama: 'PT Industri Jamu dan Farmasi Sido Muncul Tbk',
+      sektor: 'Kesehatan',
+      subsektor: 'Jamu Herbal & Suplemen Kesehatan',
+      ringkasan: 'Produsen obat herbal dan suplemen terkemuka di Indonesia dengan produk legendaris Tolak Angin, Kuku Bima, serta berbagai produk herbal inovatif berstandar farmasi.',
+      highlight: '• Kekuatan brand Tolak Angin memiliki loyalitas konsumen yang sangat kuat (market leader tak tergoyahkan).\n• Efisiensi pabrik ekstraksi modern menghasilkan marjin laba kotor (>50%) dan ROE superior (>30%).\n• Neraca keuangan tanpa utang bank (zero debt), posisi kas berlimpah, dan dividen payout ratio konsisten di atas 85%.'
+    },
+    SMRA: {
+      nama: 'PT Summarecon Agung Tbk',
+      sektor: 'Properti & Real Estat',
+      subsektor: 'Pengembangan Kota Mandiri & Mal Ritel',
+      ringkasan: 'Pengembang kota mandiri terkemuka yang sukses membangun kawasan Summarecon Kelapa Gading, Serpong, Bekasi, Bandung, Karawang, Bogor, dan Makassar.',
+      highlight: '• Kemampuan eksekusi terbukti dalam menciptakan ekosistem kota mandiri terpadu yang bernilai tinggi.\n• Pertumbuhan pendapatan berulang yang solid dari jaringan Summarecon Mall yang ramai pengunjung.\n• Permintaan residensial yang tetap kuat berkat reputasi kualitas bangunan dan fasilitas kawasan yang lengkap.'
+    },
+    SSMS: {
+      nama: 'PT Sawit Sumbermas Sarana Tbk',
+      sektor: 'Konsumer Non-Siklikal',
+      subsektor: 'Perkebunan & Pengolahan Kelapa Sawit',
+      ringkasan: 'Produsen minyak kelapa sawit yang beroperasi di Kalimantan Tengah dengan produktivitas kebun berstandar tinggi serta integrasi kilang refinery hilir melalui Citra Borneo Utama.',
+      highlight: '• Profil perkebunan muda dengan hasil panen tandan buah segar (TBS) per hektar di atas rata-rata industri.\n• Seluruh areal perkebunan telah mengantongi sertifikasi keberlanjutan sawit lestari (RSPO).\n• Integrasi dengan pabrik pengolahan hilir (refinery) untuk menangkap marjin minyak goreng dan produk turunan sawit.'
+    },
+    TAPG: {
+      nama: 'PT Triputra Agro Persada Tbk',
+      sektor: 'Konsumer Non-Siklikal',
+      subsektor: 'Perkebunan Kelapa Sawit & Karet',
+      ringkasan: 'Produsen CPO terkemuka di bawah grup Triputra yang memiliki salah satu profil usia tanaman kebun paling prima dan efisiensi mekanisasi panen modern.',
+      highlight: '• Produktivitas kebun sawit (yield CPO/ha) tertinggi di antara emiten perkebunan terbuka di BEI.\n• Usia rata-rata pohon sawit berada pada masa produksi puncak (prime production age).\n• Pengendalian biaya produksi tunai yang ketat menjaga margin keuntungan tetap tebal di berbagai siklus harga sawit.'
+    },
+    TLKM: {
+      nama: 'PT Telkom Indonesia (Persero) Tbk',
+      sektor: 'Komunikasi',
+      subsektor: 'Telekomunikasi Digital & Jaringan Terintegrasi',
+      ringkasan: 'Badan Usaha Milik Negara operator telekomunikasi terbesar di Indonesia yang memimpin pangsa pasar seluler (Telkomsel) dan internet pita lebar rumah (IndiHome).',
+      highlight: '• Infrastruktur jaringan kabel serat optik dan menara telekomunikasi terluas dan terlengkap di seluruh Nusantara.\n• Strategi Five Bold Moves yang memisahkan infrastruktur (InfraCo) dan data center untuk membuka nilai tersembunyi.\n• Arus kas bebas yang masif dan komitmen pembagian dividen bernilai besar kepada pemegang saham.'
+    },
+    TOWR: {
+      nama: 'PT Sarana Menara Nusantara Tbk',
+      sektor: 'Infrastruktur',
+      subsektor: 'Menara Telekomunikasi & Jaringan Fiber Optik',
+      ringkasan: 'Perusahaan holding infrastruktur telekomunikasi di bawah grup Djarum yang memiliki puluhan ribu menara telekomunikasi dan jaringan kabel serat optik terluas di Indonesia.',
+      highlight: '• Jaringan menara dan kabel fiber optik (FTTT) terintegrasi dengan kontrak sewa jangka panjang dari operator telekomunikasi papan atas.\n• Manajemen utang berbiaya rendah dan diversifikasi ke layanan konektivitas enterprise.\n• Arus kas berulang yang sangat prediktibel dan defensif terhadap ketidakpastian makroekonomi.'
+    },
+    UNTR: {
+      nama: 'PT United Tractors Tbk',
+      sektor: 'Perindustrian',
+      subsektor: 'Alat Berat, Kontraktor Tambang & Mineral',
+      ringkasan: 'Anak usaha Astra International yang merajai distribusi alat berat (Komatsu), kontraktor penambangan terbesar (PAMA), serta diversifikasi agresif ke tambang emas dan nikel.',
+      highlight: '• Penguasa mutlak pasar alat berat di Indonesia (>50% market share) dan kontraktor tambang dengan volume overburden terbesar.\n• Arus kas melimpah yang diinvestasikan ke aset masa depan seperti tambang emas Martabe dan smelter nikel.\n• Neraca keuangan sangat kuat dengan sejarah pembagian dividen bernilai sangat besar (jumbo dividend).'
+    },
+    UNVR: {
+      nama: 'PT Unilever Indonesia Tbk',
+      sektor: 'Konsumer Non-Siklikal',
+      subsektor: 'Barang Konsumen Cepat Habis (FMCG)',
+      ringkasan: 'Perusahaan FMCG terkemuka di Indonesia yang memproduksi puluhan merek legendaris di kategori perawatan tubuh (Lifebuoy, Pepsodent, Sunsilk) dan makanan (Bango, Royco).',
+      highlight: '• Penetrasi produk ke hampir 100% rumah tangga di Indonesia dengan saluran distribusi grosir dan ritel terdalam.\n• Portofolio merek-merek unggulan yang memimpin pangsa pasar di berbagai kategori produk kebutuhan harian.\n• Transformasi efisiensi saluran distribusi dan inovasi produk premium untuk mendorong kembali margin pertumbuhan.'
+    },
+    WIFI: {
+      nama: 'PT Solusi Sinergi Digital Tbk',
+      sektor: 'Teknologi',
+      subsektor: 'Konektivitas Internet & Ekosistem Digital (Surge)',
+      ringkasan: 'Penyedia infrastruktur jaringan serat optik terintegrasi di sepanjang jalur rel kereta api Pulau Jawa yang menghadirkan layanan internet terjangkau dan periklanan digital.',
+      highlight: '• Jalur kabel optik eksklusif di sepanjang rel kereta api Pulau Jawa dengan latensi sangat rendah dan keamanan tinggi.\n• Peluang monetisasi dari penyediaan internet broadband murah (Affordable Internet) untuk jutaan rumah tangga di kota lapis 2 dan 3.\n• Pertumbuhan pesat segmen sewa bandwidth (core leasing) untuk operator telekomunikasi dan data center.'
+    }
+  };
 
   // ========== RENDER ==========
   function renderEmiten(d) {
@@ -758,6 +1320,7 @@
     if (!d.hasFinancialData) {
       document.getElementById('content').innerHTML =
         renderHero(d) +
+        renderCompanyProfile(d) +
         '<div class="placeholder" style="margin-top:32px;border:1px solid var(--line);background:var(--bg-2);border-radius:10px">' +
         '<div class="heading">Data laporan keuangan tidak tersedia</div>' +
         '<div>Emiten <strong>' + d.code + '</strong> belum memiliki data Pendapatan / Laba Bersih di sheet.<br>' +
@@ -768,6 +1331,7 @@
 
     document.getElementById('content').innerHTML =
       renderHero(d) +
+      renderCompanyProfile(d) +
       renderKpiRow(d) +
       renderValuation(d) +
       renderChartsSection(d);
@@ -776,6 +1340,7 @@
   }
 
   function renderHero(d) {
+    const p = d.profile || EMITEN_PROFILES[d.code] || {};
     const harga = d.harga != null ? fmtIDR(d.harga, 0) : '&mdash;';
     const lq = d.latestQuarter || 'data terbatas';
     const logoUrl = LOGO_URL_TEMPLATE.replace('{CODE}', d.code);
@@ -789,7 +1354,10 @@
         '<div class="hero-left">' +
           '<span class="label-tiny">Kode Emiten</span>' +
           '<div class="hero-code">' + d.code + '</div>' +
-          '<div class="hero-meta">Data terbaru: <strong>' + lq + '</strong>' +
+          (p.nama ? '<div class="hero-company-name">' + p.nama + '</div>' : '') +
+          '<div class="hero-meta">' +
+            (p.sektor ? '<span class="badge-sector">' + p.sektor + '</span>' : '') +
+            'Data terbaru: <strong>' + lq + '</strong>' +
             '<span class="sep">&middot;</span>Bursa Efek Indonesia' +
           '</div>' +
         '</div>' +
@@ -797,6 +1365,36 @@
           '<div class="price-label">Harga Sekarang</div>' +
           '<div class="price-value"><span class="currency">IDR</span>' + harga + '</div>' +
         '</div>' +
+      '</div>';
+  }
+
+  function renderCompanyProfile(d) {
+    const p = d.profile || EMITEN_PROFILES[d.code];
+    if (!p || (!p.ringkasan && !p.highlight)) return '';
+
+    let hlHtml = '';
+    if (p.highlight) {
+      const bullets = p.highlight.split('\n').filter(function (l) { return l.trim(); });
+      hlHtml = '<div class="profile-highlight-wrap">' +
+        '<span class="label-tiny">Highlight &amp; Keunggulan Kompetitif</span>' +
+        '<ul class="profile-bullets">' +
+        bullets.map(function (b) {
+          const clean = b.replace(/^[•\-\*]\s*/, '').trim();
+          return '<li>' + clean + '</li>';
+        }).join('') +
+        '</ul></div>';
+    }
+
+    return '' +
+      '<div class="profile-card">' +
+        '<div class="profile-header">' +
+          '<div class="profile-title">' +
+            '<h3>🏢 Profil Perusahaan &amp; Ringkasan Bisnis</h3>' +
+          '</div>' +
+          (p.subsektor ? '<div style="font-size:11px;color:var(--ink-3);font-weight:600">' + p.subsektor + '</div>' : '') +
+        '</div>' +
+        (p.ringkasan ? '<div class="profile-desc">' + p.ringkasan + '</div>' : '') +
+        hlHtml +
       '</div>';
   }
 

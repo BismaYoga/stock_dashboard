@@ -165,6 +165,7 @@ function onOpen() {
     .addItem('⏸ Stop Auto-Resume', 'stopAutoResume')
     .addSeparator()
     .addItem('🌐 Info / Buka Web App Dashboard', 'openDashboardInfo')
+    .addItem('📝 Isi / Update Sheet Ringkasan (69 Emiten)', 'populateRingkasanData')
     .addSeparator()
     .addItem('🔍 Preview Files', 'previewFiles')
     .addItem('📊 Lihat Progress', 'showProgress')
