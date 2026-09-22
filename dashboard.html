@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <base target="_top">
   <meta charset="utf-8">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -547,8 +546,11 @@
   const LOGO_URL_TEMPLATE = 'https://assets.stockbit.com/logos/companies/{CODE}.png';
 
   // URL deployment Web App Google Apps Script (JSON API)
-  // Bisa diubah kapan saja via tombol ⚙️ API di pojok kanan atas
-  let API_URL = localStorage.getItem('PINTARSAHAM_API_URL') || '';
+  const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycby4yTQd8PJn4s3e4Fd6DfFVsHjyvoJBVOKr1hf6IxlWdU6x4lLDyWZfRTOwFnEPejAklQ/exec';
+  let API_URL = localStorage.getItem('PINTARSAHAM_API_URL') || DEFAULT_API_URL;
+  if (!API_URL || API_URL.indexOf('script.google.com') < 0) {
+    API_URL = DEFAULT_API_URL;
+  }
 
   let allCodes = [];
   let activeIndex = -1;
